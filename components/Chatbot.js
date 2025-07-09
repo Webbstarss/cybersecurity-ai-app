@@ -1,56 +1,54 @@
 import { useState } from 'react';
 
 export default function Chatbot() {
-  const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Hej! Jag är din cybersäkerhetsassistent. Ställ en fråga om hackerattacker eller skydd!' },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
 
-  const handleSend = async () => {
+  const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { sender: 'user', text: input };
+    const userMessage = { role: 'user', content: input };
     setMessages([...messages, userMessage]);
     setInput('');
 
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
-      });
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [...messages, userMessage] }),
+    });
 
-      const data = await res.json();
-      const botReply = { sender: 'bot', text: data.reply };
-
-      setMessages(prev => [...prev, botReply]);
-    } catch (error) {
-      setMessages(prev => [...prev, { sender: 'bot', text: 'Ett fel uppstod. Försök igen.' }]);
-    }
+    const data = await res.json();
+    const assistantMessage = { role: 'assistant', content: data.reply };
+    setMessages(prev => [...prev, assistantMessage]);
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4 bg-white shadow-md rounded-lg mt-10">
-      <h2 className="text-xl font-semibold mb-4 text-center">Cybersäkerhets-Chattbot</h2>
-      <div className="h-64 overflow-y-auto border rounded p-2 mb-4 bg-gray-50">
-        {messages.map((msg, idx) => (
-          <div key={idx} className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-            <span className={`inline-block px-3 py-2 rounded ${msg.sender === 'user' ? 'bg-blue-200' : 'bg-green-200'}`}>
-              {msg.text}
-            </span>
+    <div className="max-w-xl mx-auto p-4">
+      <div className="border rounded p-4 h-96 overflow-y-auto bg-white">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`mb-2 p-2 rounded ${
+              msg.role === 'user' ? 'bg-blue-100 text-right' : 'bg-gray-100 text-left'
+            }`}
+          >
+            {msg.content}
           </div>
         ))}
       </div>
-      <div className="flex">
+      <div className="flex mt-4">
         <input
-          className="flex-grow p-2 border rounded-l"
           type="text"
+          className="flex-1 border p-2 rounded-l"
           value={input}
-          placeholder="Ställ en fråga..."
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          placeholder="Skriv en fråga..."
         />
-        <button className="bg-blue-600 text-white px-4 rounded-r" onClick={handleSend}>
+        <button
+          onClick={sendMessage}
+          className="bg-blue-500 text-white px-4 py-2 rounded-r"
+        >
           Skicka
         </button>
       </div>
