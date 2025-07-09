@@ -19,7 +19,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     const reply = data.choices[0]?.message?.content || 'Inget svar.';
-
     res.status(200).json({ reply });
   } catch (error) {
     console.error('API Error:', error);
