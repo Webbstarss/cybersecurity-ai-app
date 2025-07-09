@@ -1,1 +1,3 @@
-# cybersecurity-ai-app
+# Cybersecurity AI Chatbot
+
+AI-drivna cybersäkerhetschattbot byggd med Next.js.
