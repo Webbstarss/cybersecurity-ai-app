@@ -1,26 +1,5 @@
-# Node modules
-node_modules/
-
-# Next.js build output
-.next/
-out/
-
-# Local env files
-.env*
-!.env.example
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Mac & systemfiler
+echo "node_modules
+.next
+.env.local
 .DS_Store
-
-# VSCode settings (om du använder det)
-.vscode/
-
-# Optional: OS-specifika cache/mappar
-Thumbs.db
-*.swp
+*.log" > .gitignore
